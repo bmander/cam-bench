@@ -1,4 +1,4 @@
-# cam-bench specification, version 0.3
+# cam-bench specification, version 0.4
 
 cam-bench works like Rosetta Code, as [brep-bench](https://brepbench.org) does for B-rep kernels.
 Each **case** gives a part, the stock it is cut from and the tools to cut it with. Each
@@ -88,9 +88,11 @@ The part lies inside the stock. A planner reads either file. The description say
 is, in words, so that a reader knows what is being cut, and says where a tool cannot reach.
 
 A case is a part whose material **every tool can reach from above**: what one of its tools cannot
-reach is left, and the reference allows for it, but no case asks for an undercut. Its tools'
-flutes and holders are long enough for its depths, so that the reference (which knows nothing of
-flutes and holders) is what a careful program can do.
+reach is left, and the reference allows for it, but no case asks for an undercut. Its tools stand
+far enough out of their holders for its depths, so that the reference (which knows nothing of
+holders) is what a careful program can do. Their flutes may be shorter than a pocket is deep
+(`pocket/deep`): a program then cuts in steps no deeper than the flutes, finishing the walls as
+it goes down, and the reference, which knows nothing of flutes either, is still what it can do.
 
 ## An implementation
 
@@ -234,7 +236,10 @@ over, however long it is. Arcs are cut into chords that stray no more than 0.000
 
 **What the tools can reach** is found the same way: for each tool, the lowest its tip can go at
 every place without entering the part, and then the lowest any of those placements cuts each cell
-(the part *opened* by the tool), the lowest over the case's tools. Where the case has a closed
+(the part *opened* by the tool), the lowest over the case's tools. The places tried are the
+cells' centers and the corners and edges between them, so that a feature lying on the cells'
+edges, as one on a whole tenth of a millimetre does, has a place to put the tool right on it: a
+slot exactly as wide as the tool is reached down its middle. Where the case has a closed
 form for the volume this removes, `harness/parts.py` and the board show the harness's own beside
 it.
 
@@ -300,6 +305,10 @@ One entry per planner:
 
 ## Versions
 
+- **0.4:** the reach of each tool is worked out from placements at the centers, edges and
+  corners of the height map's cells, not the centers alone, so a slot exactly as wide as the tool
+  is reachable. A case's flutes may be shorter than its pocket is deep (`pocket/deep`). Twelve
+  harder cases. Grading is otherwise as in 0.3.
 - **0.3:** the plunge feed limits only a move that goes down deep into material under the tool's
   axis (deeper than a quarter of its diameter): a plunge, or a ramp or helix into solid stock.
   A light cut down a surface, as a ball end mill finishing a slope makes, is fed as any cut, as

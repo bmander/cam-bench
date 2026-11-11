@@ -101,51 +101,73 @@ def profile(tool, d):
     return r - np.sqrt(np.maximum(r * r - d * d, 0.0))
 
 
-def _window(a, w, axis, op):
-    """op (np.maximum or np.minimum) over a window of 2w + 1 along `axis`, centered: the result is
-    2w shorter along it."""
-    n = 2 * w + 1
-    a = np.moveaxis(a, axis, -1)
+def _slide(a, n, op):
+    """op (np.maximum or np.minimum) over each run of n along the last axis: out[..., i] covers
+    a[..., i:i + n], so the result is n - 1 shorter."""
     out, length = a, 1
     while length * 2 <= n:
         out = op(out[..., :-length], out[..., length:])
         length *= 2
-    # out[i] covers [i, i + length); two of them cover any window of n <= 2 * length
-    out = op(out[..., :out.shape[-1] - (n - length)], out[..., n - length:])
-    return np.moveaxis(out, -1, axis)
+    # out[i] covers [i, i + length); two of them cover any run of n <= 2 * length
+    return op(out[..., :out.shape[-1] - (n - length)], out[..., n - length:])
+
+
+# where tool placements are tried, in cells from each cell's center: the centers, and the corners
+# and edges between them, so that a feature on a cell's edge (a whole number of tenths, say) has
+# placements on it, as a slot exactly as wide as the tool needs
+SHIFTS = ((0.0, 0.0), (0.5, 0.0), (0.0, 0.5), (0.5, 0.5))
 
 
 def opened(part, tool, h, floor):
     """The lowest the tool can cut each cell without entering the part: the part opened by the
-    tool, on the grid. Tool placements range over the cells' centers, and past the stock's edges
-    by the tool's radius, where there is no part."""
+    tool, on the grid. Tool placements range over the cells' centers and their corners and
+    edges, and past the stock's edges by the tool's radius, where there is no part."""
+    return np.minimum.reduce([_opened(part, tool, h, floor, sx, sy) for sx, sy in SHIFTS])
+
+
+def _opened(part, tool, h, floor, sx, sy):
+    """As `opened`, for placements a cell apart offset by (sx, sy) cells from the cells' centers.
+    A placement p (in cells, p + (sx, sy) its place) and a cell c are k = c - p apart in index,
+    and the tool's axis is (k - s)·h from the cell's center: the tool's tip can drop to
+    H[p] = max over k of part[p + k] - profile(|k - s|·h), and it cuts cell c down to
+    min over k of H[c - k] + profile(|k - s|·h)."""
     r = tool["diameter"] / 2
-    n = int(math.floor(r / h + 1e-9))
+    n = int(math.floor(r / h + 0.5 + 1e-9)) + 1  # the most |k| any offset needs
     ny, nx = part.shape
-    big = np.pad(part, 2 * n, constant_values=floor)  # (ny + 4n, nx + 4n)
-    rows = range(-n, n + 1)
+    m = 2 * n
+    big = np.pad(part, m, constant_values=floor)
+    # placements q = p + n index H, for p from -n to ny + n - 1: past the stock by the radius
+    py, px = ny + 2 * n, nx + 2 * n
+
+    rows = []
+    for kj in range(-n, n + 1):
+        dy = (kj - sy) * h
+        if abs(dy) > r + 1e-9:
+            continue
+        w = math.sqrt(max(r * r - dy * dy, 0.0)) / h
+        lo, hi = math.ceil(sx - w - 1e-9), math.floor(sx + w + 1e-9)
+        if lo <= hi:
+            rows.append((kj, lo, hi))
+    top = np.full((py, px), -np.inf)
     if tool["shape"] == "flat":
-        # a disk's max is each row's window max, over the rows
-        top = np.full((ny + 2 * n, nx + 2 * n), -np.inf)
-        for dj in rows:
-            w = int(math.floor(math.sqrt(max(r * r - (dj * h) ** 2, 0.0)) / h + 1e-9))
-            band = big[n + dj:n + dj + ny + 2 * n, n - w:n - w + nx + 2 * n + 2 * w]
-            np.maximum(top, _window(band, w, 1, np.maximum), out=top)
+        # a disk's max is each row's run max, over the rows
+        for kj, lo, hi in rows:
+            band = big[m - n + kj:m - n + kj + py, m - n + lo:m - n + hi + px]
+            np.maximum(top, _slide(band, hi - lo + 1, np.maximum), out=top)
         low = np.full((ny, nx), np.inf)
-        for dj in rows:
-            w = int(math.floor(math.sqrt(max(r * r - (dj * h) ** 2, 0.0)) / h + 1e-9))
-            band = top[n - dj:n - dj + ny, n - w:n - w + nx + 2 * w]
-            np.minimum(low, _window(band, w, 1, np.minimum), out=low)
+        for kj, lo, hi in rows:
+            band = top[n - kj:n - kj + ny, n - hi:n - lo + nx]
+            np.minimum(low, _slide(band, hi - lo + 1, np.minimum), out=low)
         return low
-    offsets = [(dj, di) for dj in rows for di in rows if (dj * dj + di * di) * h * h <= r * r + 1e-9]
-    f = {o: float(profile(tool, np.array(h * math.hypot(*o)))) for o in offsets}
-    top = np.full((ny + 2 * n, nx + 2 * n), -np.inf)
-    for (dj, di) in offsets:
-        np.maximum(top, big[n + dj:n + dj + ny + 2 * n, n + di:n + di + nx + 2 * n] - f[(dj, di)],
+    offsets = [(kj, ki) for kj, lo, hi in rows for ki in range(lo, hi + 1)]
+    f = {(kj, ki): float(profile(tool, np.array(h * math.hypot(kj - sy, ki - sx))))
+         for kj, ki in offsets}
+    for kj, ki in offsets:
+        np.maximum(top, big[m - n + kj:m - n + kj + py, m - n + ki:m - n + ki + px] - f[(kj, ki)],
                    out=top)
     low = np.full((ny, nx), np.inf)
-    for (dj, di) in offsets:
-        np.minimum(low, top[n - dj:n - dj + ny, n - di:n - di + nx] + f[(dj, di)], out=low)
+    for kj, ki in offsets:
+        np.minimum(low, top[n - kj:n - kj + ny, n - ki:n - ki + nx] + f[(kj, ki)], out=low)
     return low
 
 

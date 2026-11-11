@@ -1,28 +1,29 @@
 {
  "planner": "camlib",
  "version": "camlib 0.1.0",
- "run": "2026-11-11T10:15:30Z",
+ "run": "2026-11-11T21:45:25Z",
  "host": {
   "cpu": "Intel(R) Core(TM) i9-8950HK CPU @ 2.90GHz",
   "cores": 12,
   "system": "macOS-15.7.4"
  },
  "startup": {
-  "seconds": 0.141166,
-  "cpu_seconds": 0.132905,
-  "peak_mb": 16.6
+  "seconds": 0.214849,
+  "cpu_seconds": 0.199452,
+  "peak_mb": 17.3
  },
  "tally": {
-  "pass": 12
+  "pass": 23,
+  "crashed": 1
  },
  "cases": [
   {
    "case": "face/block-top",
    "outcome": "pass",
    "why": "",
-   "seconds": 0.381632,
-   "cpu_seconds": 0.376393,
-   "peak_mb": 40.1,
+   "seconds": 0.776114,
+   "cpu_seconds": 0.643505,
+   "peak_mb": 42.3,
    "program": {
     "moves": 27,
     "feed_length": 1423.404,
@@ -49,9 +50,9 @@
    "case": "pocket/circle",
    "outcome": "pass",
    "why": "",
-   "seconds": 0.309506,
-   "cpu_seconds": 0.309595,
-   "peak_mb": 27.9,
+   "seconds": 0.64115,
+   "cpu_seconds": 0.614251,
+   "peak_mb": 30.7,
    "program": {
     "moves": 4232,
     "feed_length": 1269.755,
@@ -68,19 +69,28 @@
     ],
     "leftover_max": 0.0,
     "leftover_volume": 0.0,
-    "reachable": 5651.84,
+    "reachable": 5655.04,
     "gouge_max": 0.0,
     "problems": {},
     "bytes": 6584
    }
   },
   {
+   "case": "pocket/deep",
+   "outcome": "crashed",
+   "why": "camlib.simulation.SimulationError: simulation stream: cutting length cannot span committed stock upper bound at lowest tip; unsupported non-heightfield removal/reach",
+   "seconds": 0.476028,
+   "cpu_seconds": 0.463211,
+   "peak_mb": 27.7,
+   "program": null
+  },
+  {
    "case": "pocket/island",
    "outcome": "pass",
    "why": "",
-   "seconds": 1.111081,
-   "cpu_seconds": 1.329389,
-   "peak_mb": 44.5,
+   "seconds": 1.947221,
+   "cpu_seconds": 2.153023,
+   "peak_mb": 46.2,
    "program": {
     "moves": 1505549,
     "feed_length": 113597.745,
@@ -97,19 +107,166 @@
     ],
     "leftover_max": 0.0,
     "leftover_volume": 0.0,
-    "reachable": 17417.6,
+    "reachable": 17420.16,
     "gouge_max": 0.0,
     "problems": {},
     "bytes": 2680703
    }
   },
   {
+   "case": "pocket/island-with-pocket",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 0.732017,
+   "cpu_seconds": 0.595107,
+   "peak_mb": 34.8,
+   "program": {
+    "moves": 15881,
+    "feed_length": 9955.056,
+    "rapid_length": 219.543,
+    "air_length": 5286.45,
+    "time": 1369.053,
+    "tool_changes": 1,
+    "removed": 20843.52,
+    "max_depth": {
+     "1": 2.0
+    },
+    "tools": [
+     1
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 20843.52,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 53000
+   }
+  },
+  {
+   "case": "pocket/narrow-gap",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 0.497376,
+   "cpu_seconds": 0.511428,
+   "peak_mb": 40.5,
+   "program": {
+    "moves": 6212,
+    "feed_length": 6423.02,
+    "rapid_length": 271.93,
+    "air_length": 3133.473,
+    "time": 809.022,
+    "tool_changes": 1,
+    "removed": 16208.48,
+    "max_depth": {
+     "1": 2.0
+    },
+    "tools": [
+     1
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 16212.48,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 23587
+   }
+  },
+  {
+   "case": "pocket/open-side",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 0.462731,
+   "cpu_seconds": 0.398233,
+   "peak_mb": 30.0,
+   "program": {
+    "moves": 3228,
+    "feed_length": 2134.17,
+    "rapid_length": 129.467,
+    "air_length": 368.928,
+    "time": 143.922,
+    "tool_changes": 1,
+    "removed": 9514.4,
+    "max_depth": {
+     "1": 2.0
+    },
+    "tools": [
+     1
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 9514.08,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 8672
+   }
+  },
+  {
+   "case": "pocket/pin-field",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 0.511854,
+   "cpu_seconds": 0.559531,
+   "peak_mb": 33.5,
+   "program": {
+    "moves": 75780,
+    "feed_length": 26343.528,
+    "rapid_length": 212.213,
+    "air_length": 22509.708,
+    "time": 7006.448,
+    "tool_changes": 1,
+    "removed": 13216.08,
+    "max_depth": {
+     "1": 2.0
+    },
+    "tools": [
+     1
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 13216.08,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 196702
+   }
+  },
+  {
+   "case": "pocket/rest-corners",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 0.679538,
+   "cpu_seconds": 0.594988,
+   "peak_mb": 39.8,
+   "program": {
+    "moves": 5100,
+    "feed_length": 9848.37,
+    "rapid_length": 172.933,
+    "air_length": 6541.101,
+    "time": 1765.029,
+    "tool_changes": 2,
+    "removed": 24540.2,
+    "max_depth": {
+     "1": 2.5,
+     "2": 2.5
+    },
+    "tools": [
+     1,
+     2
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 24540.2,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 32458
+   }
+  },
+  {
    "case": "pocket/rounded-rectangle",
    "outcome": "pass",
    "why": "",
-   "seconds": 0.55408,
-   "cpu_seconds": 0.533757,
-   "peak_mb": 31.3,
+   "seconds": 0.485091,
+   "cpu_seconds": 0.458414,
+   "peak_mb": 29.2,
    "program": {
     "moves": 4052,
     "feed_length": 2555.767,
@@ -126,7 +283,7 @@
     ],
     "leftover_max": 0.0,
     "leftover_volume": 0.0,
-    "reachable": 11857.6,
+    "reachable": 11862.4,
     "gouge_max": 0.0,
     "problems": {},
     "bytes": 9948
@@ -136,9 +293,9 @@
    "case": "pocket/slot",
    "outcome": "pass",
    "why": "",
-   "seconds": 0.320469,
-   "cpu_seconds": 0.314244,
-   "peak_mb": 27.8,
+   "seconds": 0.396113,
+   "cpu_seconds": 0.39299,
+   "peak_mb": 28.4,
    "program": {
     "moves": 2661,
     "feed_length": 741.37,
@@ -155,7 +312,7 @@
     ],
     "leftover_max": 0.0,
     "leftover_volume": 0.0,
-    "reachable": 2869.68,
+    "reachable": 2871.6,
     "gouge_max": 0.0,
     "problems": {},
     "bytes": 3455
@@ -165,9 +322,9 @@
    "case": "pocket/square-corners",
    "outcome": "pass",
    "why": "",
-   "seconds": 0.460145,
-   "cpu_seconds": 0.442553,
-   "peak_mb": 31.2,
+   "seconds": 0.451955,
+   "cpu_seconds": 0.455022,
+   "peak_mb": 29.4,
    "program": {
     "moves": 3552,
     "feed_length": 2576.353,
@@ -184,7 +341,7 @@
     ],
     "leftover_max": 0.0,
     "leftover_volume": 0.0,
-    "reachable": 11910.0,
+    "reachable": 11930.0,
     "gouge_max": 0.0,
     "problems": {},
     "bytes": 8936
@@ -194,8 +351,8 @@
    "case": "pocket/stepped",
    "outcome": "pass",
    "why": "",
-   "seconds": 0.337065,
-   "cpu_seconds": 0.342538,
+   "seconds": 0.373084,
+   "cpu_seconds": 0.377578,
    "peak_mb": 30.3,
    "program": {
     "moves": 4094,
@@ -213,19 +370,77 @@
     ],
     "leftover_max": 0.0,
     "leftover_volume": 0.0,
-    "reachable": 11740.2,
+    "reachable": 11744.2,
     "gouge_max": 0.0,
     "problems": {},
     "bytes": 10051
    }
   },
   {
+   "case": "pocket/thin-wall",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 0.630613,
+   "cpu_seconds": 0.676687,
+   "peak_mb": 31.0,
+   "program": {
+    "moves": 26436,
+    "feed_length": 12950.015,
+    "rapid_length": 2374.677,
+    "air_length": 7964.6,
+    "time": 2006.001,
+    "tool_changes": 1,
+    "removed": 20981.76,
+    "max_depth": {
+     "1": 2.0
+    },
+    "tools": [
+     1
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 20981.76,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 81195
+   }
+  },
+  {
+   "case": "pocket/tool-width-slot",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 0.574963,
+   "cpu_seconds": 0.5056,
+   "peak_mb": 27.5,
+   "program": {
+    "moves": 13,
+    "feed_length": 88.5,
+    "rapid_length": 121.5,
+    "air_length": 0.0,
+    "time": 7.158,
+    "tool_changes": 1,
+    "removed": 1341.4,
+    "max_depth": {
+     "1": 2.5
+    },
+    "tools": [
+     1
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 1341.4,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 446
+   }
+  },
+  {
    "case": "profile/boss",
    "outcome": "pass",
    "why": "",
-   "seconds": 0.397081,
-   "cpu_seconds": 0.414803,
-   "peak_mb": 36.7,
+   "seconds": 0.378757,
+   "cpu_seconds": 0.394002,
+   "peak_mb": 34.4,
    "program": {
     "moves": 5584,
     "feed_length": 11075.822,
@@ -252,9 +467,9 @@
    "case": "profile/rounded-rectangle",
    "outcome": "pass",
    "why": "",
-   "seconds": 0.708296,
-   "cpu_seconds": 0.64353,
-   "peak_mb": 36.2,
+   "seconds": 0.441563,
+   "cpu_seconds": 0.472384,
+   "peak_mb": 35.2,
    "program": {
     "moves": 16100,
     "feed_length": 17513.558,
@@ -278,12 +493,43 @@
    }
   },
   {
+   "case": "surface/bowl",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 262.096171,
+   "cpu_seconds": 923.793228,
+   "peak_mb": 391.8,
+   "program": {
+    "moves": 41385,
+    "feed_length": 21983.542,
+    "rapid_length": 12163.683,
+    "air_length": 17379.78,
+    "time": 1292.379,
+    "tool_changes": 2,
+    "removed": 10575.059,
+    "max_depth": {
+     "1": 3.0,
+     "2": 1.050309959098172
+    },
+    "tools": [
+     1,
+     2
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 10601.135,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 1981793
+   }
+  },
+  {
    "case": "surface/dome",
    "outcome": "pass",
    "why": "",
-   "seconds": 46.217676,
-   "cpu_seconds": 50.339988,
-   "peak_mb": 508.9,
+   "seconds": 176.181221,
+   "cpu_seconds": 137.98306,
+   "peak_mb": 484.4,
    "program": {
     "moves": 93467,
     "feed_length": 24224.627,
@@ -309,12 +555,43 @@
    }
   },
   {
+   "case": "surface/drafted-pocket",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 114.541518,
+   "cpu_seconds": 320.991956,
+   "peak_mb": 300.0,
+   "program": {
+    "moves": 82913,
+    "feed_length": 59369.884,
+    "rapid_length": 15526.148,
+    "air_length": 38648.023,
+    "time": 3477.888,
+    "tool_changes": 2,
+    "removed": 18193.586,
+    "max_depth": {
+     "1": 3.9953599999815825,
+     "2": 0.6720183799200612
+    },
+    "tools": [
+     1,
+     2
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 18227.518,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 1894503
+   }
+  },
+  {
    "case": "surface/filleted-pocket",
    "outcome": "pass",
    "why": "",
-   "seconds": 37.908512,
-   "cpu_seconds": 205.077378,
-   "peak_mb": 317.9,
+   "seconds": 91.606108,
+   "cpu_seconds": 326.150845,
+   "peak_mb": 321.4,
    "program": {
     "moves": 30179,
     "feed_length": 20719.071,
@@ -333,7 +610,7 @@
     ],
     "leftover_max": 0.0,
     "leftover_volume": 0.0,
-    "reachable": 11263.077,
+    "reachable": 11264.856,
     "gouge_max": 0.0,
     "problems": {},
     "bytes": 757354
@@ -343,9 +620,9 @@
    "case": "surface/half-cylinder",
    "outcome": "pass",
    "why": "",
-   "seconds": 7.420251,
-   "cpu_seconds": 8.511249,
-   "peak_mb": 70.7,
+   "seconds": 19.304406,
+   "cpu_seconds": 19.929766,
+   "peak_mb": 79.3,
    "program": {
     "moves": 70218,
     "feed_length": 34547.974,
@@ -368,6 +645,66 @@
     "gouge_max": 0.0,
     "problems": {},
     "bytes": 2554905
+   }
+  },
+  {
+   "case": "surface/small-fillet",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 73.265827,
+   "cpu_seconds": 304.428654,
+   "peak_mb": 461.6,
+   "program": {
+    "moves": 96957,
+    "feed_length": 27274.589,
+    "rapid_length": 5512.72,
+    "air_length": 10997.083,
+    "time": 1610.383,
+    "tool_changes": 2,
+    "removed": 48473.563,
+    "max_depth": {
+     "1": 12.8,
+     "2": 2.928591451471224
+    },
+    "tools": [
+     1,
+     2
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 48503.749,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 6852298
+   }
+  },
+  {
+   "case": "surface/torus-groove",
+   "outcome": "pass",
+   "why": "",
+   "seconds": 190.875971,
+   "cpu_seconds": 790.983952,
+   "peak_mb": 842.9,
+   "program": {
+    "moves": 7430,
+    "feed_length": 5088.068,
+    "rapid_length": 1001.262,
+    "air_length": 2600.569,
+    "time": 235.176,
+    "tool_changes": 1,
+    "removed": 2352.117,
+    "max_depth": {
+     "2": 0.8999844763179148
+    },
+    "tools": [
+     2
+    ],
+    "leftover_max": 0.0,
+    "leftover_volume": 0.0,
+    "reachable": 2368.388,
+    "gouge_max": 0.0,
+    "problems": {},
+    "bytes": 430674
    }
   }
  ]

@@ -4,7 +4,7 @@
 # Two jobs. `bench` sets up each planner's runner (harness/build.py), runs the whole suite
 # (harness/run.py) and renders the board (harness/site.py); `deploy` publishes it. The pip cache
 # keeps the planners' built wheels (camlib's Rust engine takes minutes to build), keyed by how
-# planners.json builds them.
+# planners.json builds them, and another keeps the cases' references.
 name: bench
 
 on:
@@ -39,6 +39,14 @@ jobs:
           path: ~/.cache/pip
           key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt', 'planners.json') }}
           restore-keys: pip-${{ runner.os }}-
+      # each case's part heights and reference, which take a while: keyed by what they depend on
+      # (harness/sim.py's cache key checks each again)
+      - name: Keep the cases' references
+        uses: actions/cache@v4
+        with:
+          path: results/reference
+          key: reference-${{ hashFiles('cases/**', 'harness/sim.py', 'harness/grade.py') }}
+          restore-keys: reference-
       - name: Set up the harness
         run: python -m pip install -r requirements.txt
       - name: Set up the planners

@@ -117,9 +117,10 @@ class Job:
             path = [(b, a) for a, b in path]
         self.follow(self.drop(surf, path, z, sampling))
 
-    def waterline(self, surf, z, sampling=0.1):
+    def waterline(self, surf, z, sampling=0.1, outside=False):
         """Around the part at height z, every loop the tool can follow touching it, but the loop
-        around the outside of the whole stock, which cuts nothing."""
+        around the outside of the whole stock, which cuts nothing, unless `outside` (where a
+        pocket opens to the stock's edge, that loop runs along its walls too)."""
         w = ocl.Waterline()
         w.setSTL(surf)
         w.setCutter(self.cutter)
@@ -129,17 +130,19 @@ class Job:
         for loop in w.getLoops():
             pts = [(q.x, q.y, q.z) for q in loop]
             xs, ys = [p[0] for p in pts], [p[1] for p in pts]
-            if not (min(xs) <= self.lo[0] and max(xs) >= self.hi[0]
-                    and min(ys) <= self.lo[1] and max(ys) >= self.hi[1]):
+            if outside or not (min(xs) <= self.lo[0] and max(xs) >= self.hi[0]
+                               and min(ys) <= self.lo[1] and max(ys) >= self.hi[1]):
                 self.follow(pts + pts[:1])
 
-    def clear(self, surf, top, bottom, stepdown, stepover, region=None, floor=None):
+    def clear(self, surf, top, bottom, stepdown, stepover, region=None, floor=None, along="x",
+              outside=False):
         """Clear down to `bottom` (or to the part, where it is higher) in levels: at each, a
         raster, then a waterline to finish the walls just above it (or above `floor`, if
         the level is under the part's lowest face)."""
         for z in levels(top, bottom, stepdown):
-            self.raster(surf, z, stepover, region)
-            self.waterline(surf, max(z, floor if floor is not None else z) + 0.001)
+            self.raster(surf, z, stepover, region, along=along)
+            self.waterline(surf, max(z, floor if floor is not None else z) + 0.001,
+                           outside=outside)
 
     def write(self, out):
         self.lines += ["G0 Z%.4f" % (self.safe + 20), "M5", "M30"]

@@ -97,3 +97,42 @@ def fillet(shape, r, keep):
     if not n:
         raise ValueError("no edge to round")
     return f.Shape()
+
+
+def torus(c, major, minor):
+    """A torus about a vertical axis through c, its tube's center circle of radius `major` in
+    the plane z = c's z."""
+    from OCP.BRepPrimAPI import BRepPrimAPI_MakeTorus
+    return BRepPrimAPI_MakeTorus(gp_Ax2(gp_Pnt(*c), gp_Dir(0, 0, 1)), major, minor).Shape()
+
+
+def rounded_rectangle_wire(x0, y0, x1, y1, r, z):
+    """The outline of a rectangle from (x0, y0) to (x1, y1) at height z, its corners rounded to
+    radius r."""
+    from OCP.BRepBuilderAPI import BRepBuilderAPI_MakeEdge, BRepBuilderAPI_MakeWire
+    from OCP.GC import GC_MakeArcOfCircle, GC_MakeSegment
+    import math
+    w = BRepBuilderAPI_MakeWire()
+    s = math.sqrt(0.5)
+    corners = [((x1 - r, y0 + r), (0, -1), (1, 0), (s, -s)), ((x1 - r, y1 - r), (1, 0), (0, 1), (s, s)),
+               ((x0 + r, y1 - r), (0, 1), (-1, 0), (-s, s)), ((x0 + r, y0 + r), (-1, 0), (0, -1), (-s, -s))]
+    pts = []
+    for (cx, cy), a, b, m in corners:
+        p, q = gp_Pnt(cx + r * a[0], cy + r * a[1], z), gp_Pnt(cx + r * b[0], cy + r * b[1], z)
+        mid = gp_Pnt(cx + r * m[0], cy + r * m[1], z)
+        pts.append((p, mid, q))
+    for i, (p, mid, q) in enumerate(pts):
+        w.Add(BRepBuilderAPI_MakeEdge(GC_MakeArcOfCircle(p, mid, q).Value()).Edge())
+        nxt = pts[(i + 1) % 4][0]
+        w.Add(BRepBuilderAPI_MakeEdge(GC_MakeSegment(q, nxt).Value()).Edge())
+    return w.Wire()
+
+
+def loft(*wires):
+    """The solid through the wires, ruled between each and the next."""
+    from OCP.BRepOffsetAPI import BRepOffsetAPI_ThruSections
+    t = BRepOffsetAPI_ThruSections(True, True)
+    for w in wires:
+        t.AddWire(w)
+    t.Build()
+    return t.Shape()

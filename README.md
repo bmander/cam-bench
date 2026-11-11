@@ -16,9 +16,12 @@ simulator and one set of rules for every program, and every planner in one table
 
 ## Cases and grading
 
-Twelve cases so far, three axes, flat and ball end mills: facing, pockets (round corners, square
-corners, a round pocket, an island, a pocket in a pocket, a slot), profiles (a part cut out of a
-plate, a boss), and surfaces (a dome, a half cylinder, a pocket with a rounded floor edge). Each
+Twenty-four cases so far, three axes, flat and ball end mills: facing; pockets (round and
+square corners, a round pocket, an island, a pocket in a pocket, slots, one exactly as wide as the
+tool, a thin wall, a narrow gap, a field of pins, corners left for a smaller tool, a pocket deeper
+than the flutes, a pocket open to the stock's side); profiles (a part cut out of a plate, a boss);
+and surfaces (a dome, a half cylinder, a pocket with a rounded floor edge, a bowl, a drafted
+pocket, a round groove, a fillet tighter than the ball). Each
 part is a STEP and an STL beside its case, built with Open CASCADE from a short script, and each
 case states its reachable volume in closed form where it has one.
 
