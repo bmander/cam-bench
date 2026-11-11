@@ -1,0 +1,52 @@
+{
+  "planners": [
+    {
+      "name": "opencamlib",
+      "planner": "https://github.com/aewallin/opencamlib",
+      "license": "LGPL-2.1",
+      "backend": "C++",
+      "frontend": "Python",
+      "build": [
+        "sh",
+        "-c",
+        "PY=$(command -v python3.11 || command -v python3.10 || command -v python3.9 || command -v python3); test -x planners/opencamlib/.venv/bin/python || $PY -m venv planners/opencamlib/.venv; planners/opencamlib/.venv/bin/python -m pip install -q opencamlib"
+      ],
+      "command": [
+        "planners/opencamlib/.venv/bin/python",
+        "planners/opencamlib/run.py"
+      ],
+      "version": [
+        "planners/opencamlib/.venv/bin/python",
+        "planners/opencamlib/run.py",
+        "--version"
+      ],
+      "source": "planners/opencamlib/cases/{category}/{name_snake}.py",
+      "note": "a library of tool placements (drop-cutter, waterline), linked into programs by a small helper of its implementations; its Python wheels need Python 3.11 or earlier",
+      "kernel": true
+    },
+    {
+      "name": "camlib",
+      "planner": "https://github.com/stevecad/camlib",
+      "license": "MIT",
+      "backend": "Rust",
+      "frontend": "Python",
+      "kernel": true,
+      "build": [
+        "sh",
+        "-c",
+        "PY=$(command -v python3.12 || command -v python3); test -x planners/camlib/.venv/bin/python || $PY -m venv planners/camlib/.venv; planners/camlib/.venv/bin/python -m pip install -q 'camlib @ git+https://github.com/stevecad/camlib@78d3074225f9e1896c1b237970ff7394d3d39bd2'"
+      ],
+      "command": [
+        "planners/camlib/.venv/bin/python",
+        "planners/camlib/run.py"
+      ],
+      "version": [
+        "planners/camlib/.venv/bin/python",
+        "planners/camlib/run.py",
+        "--version"
+      ],
+      "source": "planners/camlib/cases/{category}/{name_snake}.py",
+      "note": "built from source at a pinned commit (it needs Rust and Python 3.12 or later); its program is a toolpath, its own typed motion written as it is"
+    }
+  ]
+}

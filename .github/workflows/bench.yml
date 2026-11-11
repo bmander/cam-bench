@@ -1,0 +1,62 @@
+# Run every planner over every case, and publish the board to GitHub Pages: on every push to main,
+# and by hand. Pages must be set to deploy from GitHub Actions (Settings ▸ Pages).
+#
+# Two jobs. `bench` sets up each planner's runner (harness/build.py), runs the whole suite
+# (harness/run.py) and renders the board (harness/site.py); `deploy` publishes it. The pip cache
+# keeps the planners' built wheels (camlib's Rust engine takes minutes to build), keyed by how
+# planners.json builds them.
+name: bench
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      # 3.12 for the harness and camlib; 3.11 for opencamlib, whose wheels stop there
+      - uses: actions/setup-python@v5
+        with:
+          python-version: |
+            3.11
+            3.12
+      - name: Keep the planners' built wheels
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt', 'planners.json') }}
+          restore-keys: pip-${{ runner.os }}-
+      - name: Set up the harness
+        run: python -m pip install -r requirements.txt
+      - name: Set up the planners
+        run: python harness/build.py
+      - name: Run the cases
+        run: python harness/run.py
+      - name: Render the board
+        run: python harness/site.py
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: bench
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

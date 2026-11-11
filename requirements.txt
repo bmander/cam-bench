@@ -1,0 +1,3 @@
+# the harness: grading, the board (numpy). Writing the cases' parts (harness/parts.py) needs
+# cadquery-ocp as well, and only when a case's part changes: pip install cadquery-ocp
+numpy>=1.26
